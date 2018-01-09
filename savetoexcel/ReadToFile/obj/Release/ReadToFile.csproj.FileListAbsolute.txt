@@ -1,0 +1,5 @@
+C:\Users\Paul\Documents\mercuryapi-1.29.4.34\mercuryapi-1.29.4.34\cs\Samples\Codelets\ReadToFile\obj\Release\ReadToFile.csprojResolveAssemblyReference.cache
+C:\Users\Paul\Documents\mercuryapi-1.29.4.34\mercuryapi-1.29.4.34\cs\Samples\Codelets\ReadToFile\obj\Release\ReadToFile.exe
+C:\Users\Paul\Documents\mercuryapi-1.29.4.34\mercuryapi-1.29.4.34\cs\Samples\Codelets\ReadToFile\obj\Release\ReadToFile.pdb
+C:\Users\Paul\Documents\mercuryapi-1.29.4.34\mercuryapi-1.29.4.34\cs\ReadToFile.exe
+C:\Users\Paul\Documents\mercuryapi-1.29.4.34\mercuryapi-1.29.4.34\cs\ReadToFile.pdb
