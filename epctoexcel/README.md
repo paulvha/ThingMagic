@@ -8,11 +8,11 @@ You should have received a copy of the GNU General Public License along with thi
 This directory contains a word document with step by step instructions for a proof of concept  to achieve
 - Reading the EPC from an RFID with a ThingMagic reader,
 - store these EPC with a timestamp in daily files
-- Manually or automatically import and refresh the data from these files into Excel2016
+- Manually or automatically import and refresh the data from these files into Excel 2016
 
 This requires :
 - Visual Studio 
-- ThingMagic SDK
+- ThingMagic SDK 1.29.4
 - Excel 2016  / Office 365
 
 Knowledge of Visual Studio, VBA and Macro programming is a pre, but with the step-by-step novice
