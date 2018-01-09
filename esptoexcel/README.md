@@ -5,19 +5,19 @@ This POC distributed in the hope that it will be useful, but WITHOUT ANY WARRANT
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this POC. If not, see <http://www.gnu.org/licenses/>.
 
-This directory contains a word document with step by step instructions for a proof of concept  to
+This directory contains a word document with step by step instructions for a proof of concept  to achieve
 - Reading the ESP from an RFID with a ThingMagic reader,
 - store these ESP with a timestamp in daily files
 - Manually or automatically import and refresh the data from these files into Excel2016
 
 This requires :
 - Visual Studio 
-- THingMagic SDK
+- ThingMagic SDK
 - Excel 2016  / Office 365
 
 Knowledge of Visual Studio, VBA and Macro programming is a pre, but with the step-by-step novice
 users should be able to achieve the desired outcome
 
-This is version 1.0. It works but has not been deeply tested yet. Feedback appreciated
+This is version 1.0. It works but has not been deeply tested yet, but it did work as expected. Feedback appreciated
 
 Paul
