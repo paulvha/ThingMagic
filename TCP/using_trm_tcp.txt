@@ -1,0 +1,38 @@
+Using tmr_tcp.c to communicate over TCP from ther Mercury API to a
+remote connected  TMR reader
+
+
+Install the software and connect the TMR reader to a remote Linux device.
+
+To compile : cc -o tmr_tcp  tmr_tcp.c
+
+Start the server program like:
+
+	./tmr_tcp /dev/ttyUSB0
+
+	/dev/ttyUSB0 = port where TMR reader is connected
+
+	(-v option can be added to tserv to show the bytes exchanged)
+  
+
+See the Mercury programmer manual about using alternative transport layer
+
+To enable tcp in the program BEFORE create (e.g. in demo.c)
+
+	ret = TMR_setSerialTransport("tcp", &TMR_SR_SerialTransportTcpNativeInit);
+  
+	if (TMR_SUCCESS != ret)
+	{
+		errx(1, "adding the custom transport schemes %s\n", TMR_strerr(rp, ret));
+	}
+
+Open the program on the client with a device like
+
+	./demo tcp://192.168.1.142:3333
+
+	192.168.1.142 = TCP address of remote computer
+	3333	      = port (as indicated in the tserv.c)
+
+
+
+
