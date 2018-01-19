@@ -1,0 +1,37 @@
+# ! /bin/sh
+
+# Compile your own programs in your own directory
+# script_name :  mmer 
+# version 1.0 / paulvha / 2017
+
+# To use type  ./mmer program
+# Do NOT add ".c" that will be added by the script.  
+# An executable with the programname will be created in  directory. 
+# There is NO check on whether the program is up to date.
+
+###################################################################
+# SET THE FOLLOWING CORRECT FOR YOUR SITUATION !!!
+###################################################################
+
+# The include directory contains the .h files needed
+
+include="/home/paul/Documents/mercuryapi-1.29.4.34/c/src/api"
+
+# Want to be able to debug : -g Create Information for Symbolic Debugger
+# that could be left out for smaller .o files
+# Set for Position independent code (PIC) : -FPIC (seems to be necessary) 
+# As I only have a serial connection with the M6E-Nano
+# Do NOT outcomment in tmr_config.h
+
+option="-D TMR_ENABLE_SERIAL_READER_ONLY=1 -g -fPIC"
+
+# Want clean and good code, hence extra checks
+  
+checks="-Werror -Wall"
+
+# link in Mercuryapi: must have been installed before with
+# mv libmercuryapi.so.1 /usr/lib
+# ln -sf /usr/lib/libmercuryapi.so.1  /usr/lib/libmercuryapi.so.0
+# ln -sf /usr/lib/libmercuryapi.so.1 /usr/lib/libmercuryapi.so
+
+cc $option -I $include $checks -o $1 $1.c -lmercuryapi -lreadline -lpthread 	
