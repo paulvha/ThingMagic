@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  * 
- * paulvh : November 2017 : version 1.0
+ * paulvha : November 2017 : version 1.0
  * 
  * This program will allow to connect over TCP to an TMR reader connected to 
  * the PC. 
@@ -35,6 +35,9 @@
  *  ./tmr_tcp /dev/ttyUSB0  (assuming this is where TMR is connected)
  * 
  *  ./tmr_tcp -v /dev/ttyUSB0 : will show all bytes exchanged
+ * 
+ * paulvha : March 2018 : version 1.1
+ *      added setting baudrate to 115200
  */
 
 #include <stdio.h>
@@ -56,7 +59,7 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 
-#define VERSION "version 1.0 / November 2017 /paulvha "
+#define VERSION "version 1.1 / March 2018 /paulvha "
 #define PORT 3333       // TCP port use
 #define BACK_LOG 10     // maximum length to which the queue of pending connections
 #define MAXLEN 512      // buffer size to use
@@ -69,10 +72,10 @@ int listenfd = 0 ,connectfd = 0,tmr_handle =0;
 **********************************************************************/
 void closeout(int ret)
 {
-	if(listenfd)	close(listenfd);
-	if(tmr_handle)	close(tmr_handle);
-	if (connectfd)  close(connectfd);
-	exit(ret);
+    if(listenfd)    close(listenfd);
+    if(tmr_handle)  close(tmr_handle);
+    if (connectfd)  close(connectfd);
+    exit(ret);
 }
 
 /*********************************************************************
@@ -80,18 +83,18 @@ void closeout(int ret)
 **********************************************************************/
 void signal_handler(int sig_num)
 {
-	switch(sig_num)
-	{
-		case SIGKILL:
-		case SIGABRT:
-		case SIGINT:
-		case SIGTERM:
-			printf("\nStopping TMR_tcp reader\n");
-			closeout(0);
-			break;
-		default:
-			printf("\nneglecting signal %d.\n",sig_num);
-	}
+    switch(sig_num)
+    {
+        case SIGKILL:
+        case SIGABRT:
+        case SIGINT:
+        case SIGTERM:
+            printf("\nStopping TMR_tcp reader\n");
+            closeout(0);
+            break;
+        default:
+            printf("\nneglecting signal %d.\n",sig_num);
+    }
 }
 
 /*********************************************************************
@@ -99,17 +102,17 @@ void signal_handler(int sig_num)
 **********************************************************************/
 void set_signals()
 {
-	struct sigaction act;
-	
-	memset(&act, 0x0,sizeof(act));
-	act.sa_handler = &signal_handler;
-	sigemptyset(&act.sa_mask);
-	
-	sigaction(SIGTERM,&act, NULL);
-	sigaction(SIGINT,&act, NULL);
-	sigaction(SIGABRT,&act, NULL);
-	sigaction(SIGSEGV,&act, NULL);
-	sigaction(SIGKILL,&act, NULL);
+    struct sigaction act;
+    
+    memset(&act, 0x0,sizeof(act));
+    act.sa_handler = &signal_handler;
+    sigemptyset(&act.sa_mask);
+    
+    sigaction(SIGTERM,&act, NULL);
+    sigaction(SIGINT,&act, NULL);
+    sigaction(SIGABRT,&act, NULL);
+    sigaction(SIGSEGV,&act, NULL);
+    sigaction(SIGKILL,&act, NULL);
 }
 
 /*********************************************************************
@@ -118,44 +121,52 @@ void set_signals()
 **********************************************************************/
 void tmr_open(char *device)
 {
-	int ret;
-	struct termios t;
+    int ret;
+    struct termios t;
 
-	tmr_handle = open(device, O_RDWR);
+    tmr_handle = open(device, O_RDWR);
 
-	if (tmr_handle == -1)
-	{
-	  printf("can not open device %s\n",device);
-	  closeout(EXIT_FAILURE);
-	}
+    if (tmr_handle == -1)
+    {
+      printf("can not open device %s\n",device);
+      closeout(EXIT_FAILURE);
+    }
 
   /* this part is coming from the Mercury API
    * Set 8N1, disable high-bit stripping, soft flow control, and hard
    * flow control (modem lines).
    */
-	ret = tcgetattr(tmr_handle, &t);
+    ret = tcgetattr(tmr_handle, &t);
   
-	if (-1 == ret)
-	{
-	  printf("can not obtain termio from device\n");
-	  closeout(EXIT_FAILURE);
-	}
-
-	t.c_iflag &= ~(ICRNL | IGNCR | INLCR | INPCK | ISTRIP | IXANY 
-				 | IXON | IXOFF | PARMRK);
-	t.c_oflag &= ~OPOST;
-	t.c_cflag &= ~(CRTSCTS | CSIZE | CSTOPB | PARENB);
-	t.c_cflag |= CS8 | CLOCAL | CREAD | HUPCL;
-	t.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
-	t.c_cc[VMIN] = 0;
-	t.c_cc[VTIME] = 1;
-	ret = tcsetattr(tmr_handle, TCSANOW, &t);
-	
-	if (-1 == ret)
-	{
-	  printf("can not set termio on device\n");
-	  closeout(EXIT_FAILURE);
-	}
+    if (-1 == ret)
+    {
+      printf("can not obtain termio from device\n");
+      closeout(EXIT_FAILURE);
+    }
+    
+    t.c_iflag &= ~(ICRNL | IGNCR | INLCR | INPCK | ISTRIP | IXANY 
+                 | IXON | IXOFF | PARMRK);
+    t.c_oflag &= ~OPOST;
+    t.c_cflag &= ~(CRTSCTS | CSIZE | CSTOPB | PARENB);
+    t.c_cflag |= CS8 | CLOCAL | CREAD | HUPCL;
+    t.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+    t.c_cc[VMIN] = 0;
+    t.c_cc[VTIME] = 1;
+    
+    // set baudrate
+    if (-1 == cfsetospeed (&t,B115200))
+    {
+      printf("can not set speed on device\n");
+      closeout(EXIT_FAILURE);
+    } 
+      
+    ret = tcsetattr(tmr_handle, TCSANOW, &t);
+    
+    if (-1 == ret)
+    {
+      printf("can not set termio on device\n");
+      closeout(EXIT_FAILURE);
+    }
 }
 
 /****************************************************************** 
@@ -168,12 +179,12 @@ void tmr_open(char *device)
 
 void disp_verbose(char *buff, int n, char * dir)
 {
-	int i;
-	
-	printf("%s ", dir);
-	for (i = 0 ; i < n; i++) printf("%02x", ( buff[i] & 0xff)); 
-	
-	printf("\n");
+    int i;
+    
+    printf("%s ", dir);
+    for (i = 0 ; i < n; i++) printf("%02x", ( buff[i] & 0xff)); 
+    
+    printf("\n");
 }
 
 /****************************************************************** 
@@ -187,27 +198,27 @@ void disp_verbose(char *buff, int n, char * dir)
  ******************************************************************/
 int tcp_write (char *buff, int n)
 {
-	int ret, length;
-	
-	length = n;
-	
-	do
-	{
-		ret = write(connectfd,buff,length);
-	
-		if (ret == -1)
-		{
-			printf("Error during writing to TCP socket\n");
-			return(0);
-		}
-	
-		length -= ret;
-		buff += ret;
-	
-	} while (length > 0);
-	
-		
-	return(1);
+    int ret, length;
+    
+    length = n;
+    
+    do
+    {
+        ret = write(connectfd,buff,length);
+    
+        if (ret == -1)
+        {
+            printf("Error during writing to TCP socket\n");
+            return(0);
+        }
+    
+        length -= ret;
+        buff += ret;
+    
+    } while (length > 0);
+    
+        
+    return(1);
 }
 
 /****************************************************************** 
@@ -221,26 +232,26 @@ int tcp_write (char *buff, int n)
  ******************************************************************/
 int tmr_write(char *buff, int n)
 {
-	int ret, length;
-	
-	length = n;
-	
+    int ret, length;
+    
+    length = n;
+    
     do
-	{
-		ret = write(tmr_handle,buff,length);
-	
-		if (ret == -1)
-		{
-			printf("Error during writing to TMR reader\n");
-			return(0);
-		}
+    {
+        ret = write(tmr_handle,buff,length);
+    
+        if (ret == -1)
+        {
+            printf("Error during writing to TMR reader\n");
+            return(0);
+        }
 
-		length -= ret;
-		buff += ret;
-	
-	} while (length > 0);
+        length -= ret;
+        buff += ret;
+    
+    } while (length > 0);
 
-	return(1);
+    return(1);
 }
 
 /************************************************************** 
@@ -257,14 +268,14 @@ int tmr_write(char *buff, int n)
  ***************************************************************/
 int tcp_read(char *buff, int *len)
 {
-	int ret;
-	int count=1;
+    int ret;
+    int count=1;
     int det_hdr = 0;
     
     do
     {
         ret = read(connectfd, buff, MAXLEN);
-	
+    
         if (ret == -1)
         {
             printf("Error during reading from TCP\n");
@@ -284,7 +295,7 @@ int tcp_read(char *buff, int *len)
     
     } while (count > 0);
     
-	return(1);
+    return(1);
 }
 
 /************************************************************** 
@@ -301,20 +312,20 @@ int tcp_read(char *buff, int *len)
  ***************************************************************/
 int tmr_read(char *buff, int *len)
 {
-	int ret;
-	int count = 1;
+    int ret;
+    int count = 1;
     int det_hdr = 0;
 
     do
     {
         ret = read(tmr_handle, buff, MAXLEN);
-	
+    
         if (ret == -1)
         {
             printf("Error during reading from TMR reader\n");
             return(0);
         }
- 
+
         // if first part of message
         if (det_hdr == 0  && (buff[0] & 0xff) == 0xff && ret != 0)
         {
@@ -329,7 +340,7 @@ int tmr_read(char *buff, int *len)
     
     } while (count > 0);
 
-	return(1);
+    return(1);
 }
 
 /**************************************************************
@@ -340,39 +351,39 @@ int tmr_read(char *buff, int *len)
  * ************************************************************/
 void tmr_comm(int connectfd, int verbose)
 {
-	char buff[MAXLEN];
-	int len = 0;
+    char buff[MAXLEN];
+    int len = 0;
     int loop = 1;
 
-	printf("ready to communicate\n");
+    printf("ready to communicate\n");
 
     while (loop)
     {
-		len = 0;
+        len = 0;
         
         // get command from TCP / client
-		tcp_read(buff, &len);
-		
-		if (len == EOF || len == 0 )
-		{
-			loop  = 0;
-			break;
-		}
-		
-		if (verbose) disp_verbose(buff, len, "Sending:");
-			
-		//write command to TMR reader
-		loop = tmr_write(buff,len);
-		
-		len = 0;
-		//read TMR (wait for response)
-		if (loop) loop = tmr_read(buff, &len);
-	
-		if (verbose && loop) disp_verbose(buff, len, "Receiving:");
+        tcp_read(buff, &len);
+        
+        if (len == EOF || len == 0 )
+        {
+            loop  = 0;
+            break;
+        }
+        
+        if (verbose) disp_verbose(buff, len, "Sending:");
+            
+        //write command to TMR reader
+        loop = tmr_write(buff,len);
+        
+        len = 0;
+        //read TMR (wait for response)
+        if (loop) loop = tmr_read(buff, &len);
+    
+        if (verbose && loop) disp_verbose(buff, len, "Receiving:");
 
-		// write response to TCP / client
-		if (loop && len > 0) loop = tcp_write(buff,len);
-	}
+        // write response to TCP / client
+        if (loop && len > 0) loop = tcp_write(buff,len);
+    }
     
     printf("ending connection\n");
     
@@ -385,12 +396,12 @@ void tmr_comm(int connectfd, int verbose)
  
 void usage()
 {
-	printf("Usage: tmr_tcp  [-v] device\n"
-	       "           device: 'COM1' or '/dev/ttyUSB0' "
+    printf("Usage: tmr_tcp  [-v] device\n"
+           "           device: 'COM1' or '/dev/ttyUSB0' "
            "or '/dev/ttyS0'\n"
            "       -v verbose: shows bytes exchanged\n\n"
            "%s\n\n",VERSION);
-	
+    
     exit(EXIT_FAILURE);
 }
 
@@ -403,30 +414,30 @@ main(int argc, char *argv[])
     socklen_t addrlen;
     int option, opt, verbose = 0 ;
 
-	while ((opt = getopt(argc, argv, "v")) != -1)
-	{
-		switch (opt) 
+    while ((opt = getopt(argc, argv, "v")) != -1)
+    {
+        switch (opt) 
         {
             case 'v':
               verbose = 1;
               break;
             default: /* '?' */
                 usage();
-		}
-	}
+        }
+    }
   
-	argc -= optind;
-	argv += optind;
+    argc -= optind;
+    argv += optind;
     
     if (argc < 1) usage();
 
     // catch signals
-	set_signals();
+    set_signals();
     
     // open connection to TMR reader
     tmr_open(argv[0]);
   
-	// open network connection
+    // open network connection
     listenfd = socket(AF_INET,SOCK_STREAM,0);
     
     if(listenfd == -1)
@@ -435,64 +446,64 @@ main(int argc, char *argv[])
         closeout(0);
     }
 
-	option = SO_REUSEADDR;
-	setsockopt(listenfd,SOL_SOCKET,option,&option,sizeof(option));
-	
-	bzero(&server,sizeof(server));
-	server.sin_family = AF_INET;
-	server.sin_port = htons(PORT);
-	server.sin_addr.s_addr = htonl(INADDR_ANY);
-	
-	// bind to port
-	if(bind(listenfd,(struct sockaddr *)&server,sizeof(server)) == -1)
+    option = SO_REUSEADDR;
+    setsockopt(listenfd,SOL_SOCKET,option,&option,sizeof(option));
+    
+    bzero(&server,sizeof(server));
+    server.sin_family = AF_INET;
+    server.sin_port = htons(PORT);
+    server.sin_addr.s_addr = htonl(INADDR_ANY);
+    
+    // bind to port
+    if(bind(listenfd,(struct sockaddr *)&server,sizeof(server)) == -1)
     {
-		perror("TCP Bind error!");
-		closeout(EXIT_FAILURE);
-	}
-	
-	// start listening
-	if(listen(listenfd,BACK_LOG) == -1)
+        perror("TCP Bind error!");
+        closeout(EXIT_FAILURE);
+    }
+    
+    // start listening
+    if(listen(listenfd,BACK_LOG) == -1)
     {
-		perror("TCP listening error");
-		closeout(EXIT_FAILURE);
-	}
+        perror("TCP listening error");
+        closeout(EXIT_FAILURE);
+    }
     
     printf("waiting for client's request.....\n");
     
     while(1)
     {
-		addrlen = sizeof(client);
-		connectfd = accept(listenfd,(struct sockaddr*)&client,&addrlen);
-		
-		if(connectfd == -1)
+        addrlen = sizeof(client);
+        connectfd = accept(listenfd,(struct sockaddr*)&client,&addrlen);
+        
+        if(connectfd == -1)
         {
-			perror("TCP accept error");
-			closeout(EXIT_FAILURE);
-		}
-		else
-			printf("TCP client connected\n");
+            perror("TCP accept error");
+            closeout(EXIT_FAILURE);
+        }
+        else
+            printf("TCP client connected\n");
 
-		// create child proces
-		if((childpid = fork()) == 0)
-        {	
-			close(listenfd);
-			listenfd = 0;
-		
-        	printf("client from %s\n",inet_ntoa(client.sin_addr));
+        // create child proces
+        if((childpid = fork()) == 0)
+        {   
+            close(listenfd);
+            listenfd = 0;
+        
+            printf("client from %s\n",inet_ntoa(client.sin_addr));
             
             // sent as fast a possible
-			option = 1;
-			setsockopt(connectfd,IPPROTO_TCP,TCP_NODELAY,&option,sizeof(option));	
+            option = 1;
+            setsockopt(connectfd,IPPROTO_TCP,TCP_NODELAY,&option,sizeof(option));   
 
-			tmr_comm(connectfd, verbose);
-		}
-		else if(childpid < 0)
-			printf("fork error: %s\n",strerror(errno));
-		
-		// close connectfd in parent
-		close(connectfd);
-		connectfd = 0;
-	}
+            tmr_comm(connectfd, verbose);
+        }
+        else if(childpid < 0)
+            printf("fork error: %s\n",strerror(errno));
+        
+        // close connectfd in parent
+        close(connectfd);
+        connectfd = 0;
+    }
 
     closeout(EXIT_SUCCESS);
 }
