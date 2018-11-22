@@ -1,0 +1,100 @@
+#***********************************************************
+# Compling API for mercuryapi in C
+#***********************************************************
+
+# first make the libary
+
+cd source_directory/c/src/api
+make TMR_ENABLE_SERIAL_READER_ONLY=1
+
+# setup the shared library
+
+sudo bash
+mv libmercuryapi.so.1 /usr/lib
+ln -sf /usr/lib/libmercuryapi.so.1  /usr/lib/libmercuryapi.so.0
+ln -sf /usr/lib/libmercuryapi.so.1 /usr/lib/libmercuryapi.so
+
+#***********************************************************
+# creating a C program using the API mercury
+#***********************************************************
+# compile with option  -l mercuryapi
+
+# to include the header files : -I directory_with_header_files
+
+# making the a shell command:  mmer. 
+# usage ./mmer file
+# cc -D TMR_ENABLE_SERIAL_READER_ONLY=1 -I /home/paul/Documents/mercuryapi-1.29.4.34/c/src/api -g -Werror -Wall -fPIC -o $1 $1.c -lmercuryapi -lreadline -lpthread 
+
+
+#***********************************************************
+# creating native driver for mercuryapi for JAVA
+#***********************************************************
+
+# Compile ./java to class
+# This will be created a directory mercury1.29.4.34/java/com
+# goto java directory : cd /home/paul/Documents/mercuryapi-1.29.4.34/java
+# create native header file : javah com.thingmagic.SerialTransportNative
+# The header file is in the java directory (actually there are 2, but neglect the factory one.)
+# Copy this to mercuryapi-1.29.4.34/c/src/jni (THERE MIGHT BE ONE ALREADY, save first !!!)
+# The nativeSerial.c is already there and should (at least) contain the same routines as in the .h file.
+# to compile
+# cd mercuryapi-1.29.4.34/c/proj/jni
+# find the jni.h file : 
+	find / -name jni.h
+	output like : /usr/lib/jvm/java-9-openjdk-amd64/include/jni.h
+
+# change the Makefile.jni  line 14 - 16)
+
+from :
+	CFLAGS  += -I/usr/lib/jvm/java-6-sun/include -I/usr/lib/jvm/java-6-sun/include/linux
+	CFLAGS  += -I/usr/lib/jvm/java-6-openjdk/include -I/usr/lib/jvm/java-6-openjdk/include/linux
+	CFLAGS  += -I/usr/lib/jvm/sun-jdk-1.6/include/ -I/usr/lib/jvm/sun-jdk-1.6/include/linux
+To : 
+	CFLAGS  += -I/usr/lib/jvm/java-9-openjdk-amd64/include/ 
+	CFLAGS  += -I/usr/lib/jvm/java-9-openjdk-amd64/include/linux/
+
+# make file
+	sudo make -f Makefile.jni 
+	results in .so.0 file in directory
+	rename to linux-amd64.lib
+
+# move to right place
+	cd mercuryapi-1.29.4.34/java
+	cp linux-amd64.lib linux-amd64.org
+	cp mercuryapi-1.29.4.34/c/proj/jni/linux-amd64.lib .
+
+# to include in CURRENT  mercury.jar:
+	cp mercuryapi.jar mercuryapi.org
+	mkdir tt
+	cd tt
+	cp ../mercuryapi.org mercuryapi.jar
+	jar -xf mercuryapi.jar
+	rm mercurypai.jar
+	locate current linux-amd64.lib
+	cp the new linux-amd64.lib to this place
+	cd tt
+	jar -cf mercuryapi.jar *
+	cp mercuryapi.jar ..
+
+# to include in new build, follow: 
+
+#***********************************************************
+# compiling new API in JAVA
+#***********************************************************
+# sudo bash 
+# cd mercuryapi-1.29.4.34/java
+# edit change one of the .java in mercuryapi_nb directory (even a comment and write)
+# make all
+
+
+#***********************************************************
+# Running application error in JAVA
+#***********************************************************
+# lib-amd64.lib not found
+# root cause : the lib is NOT in the class, but at root directory
+# in SerialTransportNative.java change line 106
+# from :libname = '/'+ osname + '-' + osarch + ".lib";
+# to : libname = osname + '-' + osarch + ".lib";
+
+
+
