@@ -4,7 +4,10 @@
  *************************************************************************************
  
   It has been tested against the standard demo.c example from the Mercury API, accept 
-  for the addition mentioned in point 2.
+  for the addition mentioned in point 2. THis was running on Ubuntu 18.04. 
+  I have not been able to connect using the UAR on windows 10. I suspect a driver issue with he CH340.
+  Search on CH340 driver windows 10 will show a list of people suffering the same issue. more work
+  needed on that I assume
   
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   This is not a stable connection for a number of reasons :
