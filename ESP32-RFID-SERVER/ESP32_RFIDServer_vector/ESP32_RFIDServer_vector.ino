@@ -1,8 +1,8 @@
 /*********************************************************************************
- * Copyright (c) December 2018, version 1.0     Paul van Haastrecht  
- * 
+ * Copyright (c) December 2018, version 1.0     Paul van Haastrecht
+ *
  *  =========================  highlevel Description =================================
- *  
+ *
  *  This sketch will connect the ESP32 thing (https://www.sparkfun.com/products/13907 ) to the local network as a server and constant tries to
  *  read RFID tags with a Sparkfun/nano/simultaneousreader ( https://www.sparkfun.com/products/14066 ) as well as check for client connection.
  *  The detected unique EPC's are stored in an array on the board and can be accessed with the following commands:
@@ -17,87 +17,87 @@
  *  Optional if you had also connected a DS18x20 temperature sensor :
  *  tmp_c          : returns temperature in celsius
  *  tmp_f          : returns temperature in Fahrenheit
- *  
+ *
  *  command looks like : http://192.168.1.137/epc_cnt or http://rfid.local/epc_cnt
  *
  *  =========================  Hardware connections =================================
  *
  *  ===  RFID connection
- *  
+ *
  *  Set the onboard switch to HW-UART and connect with lose wires.
- *  
+ *
  *  RFID reader     ESP32 thing (Serial2 is used)
  *  GND -----------------GND
  *  UART TX ---- LS------ 16      (LS = level shifter !!)
  *  UART RX ------------- 17
  *
- *  The reader is external powered in my case. 
- *  
+ *  The reader is external powered in my case.
+ *
  *  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- *  WARNING!! WARNING !!WARNING!! WARNING !!WARNING!! WARNING !! WARNING!! WARNING !! 
+ *  WARNING!! WARNING !!WARNING!! WARNING !!WARNING!! WARNING !! WARNING!! WARNING !!
  *  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- *  
+ *
  *  The NANO M6E needs at least 3.7V VCC. It will not work stable on 3.3V.
- *  
+ *
  *  If you connect to the 5V (USB-V) you MUST use a level shifter for the for RX line from RFID reader to the ESP32.
  *  The pins on the ESP-32 can only handle 3V3 signals !!
- *  
- *  The RFID RX line, TX / pin 17 from ESP32, actually does not need a level shifter. The 3V3 that is coming from the ESP32 works good for the Nano 
+ *
+ *  The RFID RX line, TX / pin 17 from ESP32, actually does not need a level shifter. The 3V3 that is coming from the ESP32 works good for the Nano
  *  HOWEVER for the TX FROM the Nano, did not work well with that level shifter (https://www.sparkfun.com/products/12009)
- *  Apparently the level shifter on the Nano and this level shifter do not work well together. So I made it working with resistors: 
- *  
- *            ________           _______ 
+ *  Apparently the level shifter on the Nano and this level shifter do not work well together. So I made it working with resistors:
+ *
+ *            ________           _______
  *  GND ------| 10K  |-----!---- | 5k6 |------  TX from Nano
- *            --------     !     -------  
+ *            --------     !     -------
  *                         !
  *                         pin 16 (ESP32)
  *
- *  
+ *
  *  ====  Optional temperature sensor (DS18x20 family)
  *
  *             DS18x20           ESP32 thing
  *   ------      GND   ------------- GND
  * |-| 4k7 |--   VCC /red ---------  3V3
- * | ------ 
- * |-----------  data/yellow ------- 4 
- * 
+ * | ------
+ * |-----------  data/yellow ------- 4
+ *
  *  You MUST connect a resistor of 4K7 between data and VCC for pull-up.
- *  
+ *
  *  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- *  WARNING!! WARNING !!WARNING!! WARNING !!WARNING!! WARNING !! WARNING!! WARNING !! 
- *  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+ *  WARNING!! WARNING !!WARNING!! WARNING !!WARNING!! WARNING !! WARNING!! WARNING !!
+ *  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  *  The DS18B20 works with VCC between 3 and 5V. It works fine on 3.3V however if connected to 5V you MUST include a level shifter or making
  *  a bridge with resistors like below
- *  
- *            -------            ------- 
+ *
+ *            -------            -------
  *  GND ------| 10K  |-----!---- | 5k6 |------  data/yellow from DS18x20
- *            --------     !     -------  
+ *            --------     !     -------
  *                         !
  *                         pin 4 (ESP32)
  *
- *  
+ *
  *  ================================= PARMAMETERS =====================================
  *
  *  From line 179 there are parameters that MUST of CAN be changed in order to configure the program
- *  
+ *
  *  ================================== SOFTWARE ========================================
- *  
+ *
  *  The sketch is depending on the following libraries and they must have been installed before
- *  
+ *
  *  for Array handling     https://github.com/janelia-arduino/Vector.git
  *  for RFID NANO          https://github.com/sparkfun/SparkFun_Simultaneous_RFID_Tag_Reader_Library
  *  for Temperature sensor https://github.com/PaulStoffregen/OneWire
- *  
  *
- *  Code for the DS18x20 is based on the DS18x20 example in the onewire library 
- *  Code for the RFID is based on example the Sparkfun library 
+ *
+ *  Code for the DS18x20 is based on the DS18x20 example in the onewire library
+ *  Code for the RFID is based on example the Sparkfun library
  *  Code for the WIFI is based on the ESP32 example AdvancedWebservers sketch. The original copyright information is included below
- *  
- *  Make sure : 
+ *
+ *  Make sure :
  *  - To select the Sparkfun ESP32 thing board before compiling
  *  - The serial monitor is NOT active (will cause upload errors)
  *  - Press GPIO 0 switch during connecting after compile to start upload to the board
- *  
+ *
  *  NO support, delivered as is, have fun, good luck !!
  */
 
@@ -181,8 +181,8 @@ void Check_EPC();
   ////////////////////////////////////////////////
 
   /* MUST: Replace these two character strings with the name & password of your WiFi network.*/
-const char mySSID[] = "homelan";
-const char myPSK[] = "MJ270380";
+const char mySSID[] = "SSID";
+const char myPSK[] = "PASSWORD";
 
   /* Option: ESP8266Server port definition
    * port 80 must be used for browser */
@@ -215,8 +215,8 @@ const char* MDNS_NAME = "rfid";
   /////////////////////////////////////////////////
   //            DS18x20  Definitions             //
   /////////////////////////////////////////////////
-  
- /* MUST: to which pin is the data wire of the DS18x20 connected 
+
+ /* MUST: to which pin is the data wire of the DS18x20 connected
   * 0 means NO temperature sensor */
 #define TEMP_PIN 4          // see remark in hardware section in begin sketch
 
@@ -281,11 +281,11 @@ void setup(void) {
   Serial.begin(SERIAL);
 
   Init_RFID();        // initialize RFID shield
-  
+
   init_tmp();         // try detect temperature sensor
-    
+
   Array_Init();       // initialize array
-  
+
   Init_Wifi();        // initialize different WIFI components
 
   Serial.print(F("Array initialized\nNow connect to the ipaddress: "));
@@ -310,11 +310,11 @@ void loop(void) {
 void init_tmp(void) {
 
   type_s = 0xf;            // indicate no sensor
-  
+
   if (TEMP_PIN == 0) return;
 
-  Serial.print(F("Try to detect temperature sensor. "));  
-  
+  Serial.print(F("Try to detect temperature sensor. "));
+
   if ( !ds.search(addr)) {
     Serial.println(F("No temperature sensor detected."));
     return;
@@ -369,7 +369,7 @@ float read_Temperature(bool temperature)
   present = ds.reset();
   ds.select(addr);
   ds.write(0xBE);             // Read Scratchpad
-  
+
   for ( i = 0; i < 9; i++) {  // we need 9 bytes
     data[i] = ds.read();
   }
@@ -441,8 +441,8 @@ void Array_Add(uint8_t *msg, byte mlength)
     bool found = false;
     byte j;
     size_t i;
-    
-    for (i = 0; i < epcs.size(); i++) 
+
+    for (i = 0; i < epcs.size(); i++)
     {
         found = true;
 
@@ -476,7 +476,7 @@ void Array_Add(uint8_t *msg, byte mlength)
     Serial.println(F("Can not add more"));
     return;
   }
-  
+
   // add new entry in array
   Epcrecv newepc;
   for (j = 0 ; j < EPC_ENTRY ; j++) newepc.epc[j] = msg[j];
@@ -492,18 +492,18 @@ void Array_Add(uint8_t *msg, byte mlength)
 void Init_Wifi()
 {
   int retry_connect;
-  
+
 retry_wifi:
-  retry_connect = 0; 
+  retry_connect = 0;
   Serial.println(F("Trying to connect to WIFI network"));
   WiFi.mode(WIFI_STA);
   WiFi.begin(mySSID, myPSK);
 
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
-    
+
     delay(500);
-    
+
     if(++retry_connect > 50)
     {
       Serial.println(F("Failure to connect. Retry"));
@@ -511,7 +511,7 @@ retry_wifi:
       WiFi.mode(WIFI_OFF);
       goto retry_wifi;
     }
-    
+
     Serial.print(".");
   }
 
@@ -550,7 +550,7 @@ retry_wifi:
 
 void Init_RFID()
 {
-  
+
 retry:
   Serial.println(F("try to connect to RFID reader"));
 
@@ -631,7 +631,7 @@ void Check_EPC()
   {
     byte responseType = nano.parseResponse(); //Break response into tag ID, RSSI, frequency, and timestamp
 
-    if (responseType == RESPONSE_IS_KEEPALIVE) 
+    if (responseType == RESPONSE_IS_KEEPALIVE)
     {
       if (PRMDEBUG > 1) Serial.println(F("Scanning"));
     }
@@ -695,7 +695,7 @@ void handleRoot() {
                      "epc_all&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;: perform get_cnt + epc_dct commands<br>"
                      "epc_clr&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;: will enable (or disable) remove the EPC's from the list after the next epc_num or epc_dct command<br>"
                      "force_epc_clr&emsp;&emsp;&emsp;&nbsp;: will remove all the detected EPC's immediately <br> ");
-  
+
   String HtmlBuf_tmp= F("tmp_f&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;&nbsp;: returns temperature in Fahrenheit<br>"
                      "tmp_c&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;: returns temperature in Celsius<br>");
 
@@ -826,14 +826,14 @@ void epc_num()
   String header = F("<html>\r\n  <head>\r\n<title>Unique EPC overview</title> \r\n<style>\r\n"
                    "body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; Color: #000088; }\r\n"
                    "</style>\r\n  </head>\r\n  <body>\r\n");
-  
+
   String epc_cnt = F("<h1>Unique EPC count: ");
   String epc_num = F("<h1>Detected EPC's</h1>     <p>");
-  
+
   int j, esize, i = 0;
   bool sent_comma = false;
   HtmlBuf[0] = 0x0;
-  
+
   // if command van epc_all, then add count
   if (get_all) snprintf(HtmlBuf, HTML_BUFFER, "%s%s %02d</h1><br>", header.c_str(), epc_cnt.c_str(), Array_Cnt());
 
@@ -841,10 +841,10 @@ void epc_num()
 
   header += HtmlBuf;
   esize = Array_Cnt();  // get count
-  
+
   // loop through the complete list
   while ( i < esize ) {
-    
+
     // add comma in between EPC's
     if (sent_comma) header += ",";
     else sent_comma = true;
@@ -856,7 +856,7 @@ void epc_num()
 
     // add detection count ?
     if (detect_cnt) sprintf(HtmlBuf, "%s:%02d",HtmlBuf, epcs[i].cnt);
-    
+
     header += HtmlBuf;
 
     // if epc_clr was called before, it will clear entry after adding EP
@@ -865,14 +865,14 @@ void epc_num()
       esize--;
       i=0;
     }
-    else      
+    else
       i++;    // next EPC
   }
 
   // add trailer
   if (enable_clr){
     header += "\n</p>\n<h1>These EPC's have now been removed. </h1>\n</body>\n</html>\n";
-      
+
     // reset / disable clear EPC entries for next call
     enable_clr = false;
   }
