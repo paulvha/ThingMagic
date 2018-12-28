@@ -18,45 +18,6 @@ tmp_f         : returns temperature in Fahrenheit
 
 Next to the .ino there is also a document included for detailed description
 
-Hardware connections
+Hardware connections: 
+See in top of sketch or the detailed document
 
-   RFID reader          ESP32 thing (Serial2 is used)
-     GND ---------------   GND
-     UART TX ---- LS-----  16      (LS = level shifter !!)
-     UART RX ------------  17
-
-The reader is external powered in my case. 
-
-WARNING!! WARNING !!WARNING!! WARNING !!WARNING!!
-
-The NANO M6E needs at least 3.7V VCC. It will not work stable on 3.3V.
- 
-If you connect to the 5V (USB-V) you MUST use a level shifter for the for RX line from RFID reader to the ESP32.  The pins on the ESP-32 can only handle 3V3 signals !!
- 
-The RFID RX line, TX / pin 17 from ESP32, actually does not need a level shifter. The 3V3 that is coming from the ESP32 works good for the Nano. HOWEVER for the TX FROM the Nano, did not work well with that level shifter (https://www.sparkfun.com/products/12009)
-Apparently the level shifter on the Nano and this level shifter do not work well together. So I made it working with resistors: 
- 
-             ______              _____
-  GND ------| 10K  |-----!---- | 5k6 |------  TX from Nano
-            --------     !     -------  
-                         !
-                     pin 16 (ESP32)
-
-Optional temperature sensor (DS18x20 family) 
-
-              DS18x20           ESP32 thing
-     ____      GND   ------------- GND
- .--| 4k7 |--  VCC /red ---------  3V3
- |   ‘-----’ 
- ‘-----------  data/yellow -------  4 
-
-You MUST connect a resistor of 4K7 between data and VCC for pull-up.
- 
-WARNING!! WARNING !!WARNING!! WARNING !!WARNING!! 
-
-The DS18B20 works with VCC between 3 and 5V. It works fine on 3.3V however if connected to 5V you MUST include a level shifter or making a bridge with resistors like below
-            ______              _____
-  GND ------| 10K  |-----!---- | 5k6 |------ data/yellow from DS18x20
-            --------     !     -------  
-                         !
-                      pin 4 (ESP32)
