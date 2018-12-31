@@ -236,7 +236,7 @@ const char* MDNS_NAME = "rfid";
   * 1 = tag info found
   * 2 = 1 + programflow + temperature info
   * 3 = 2 + Nano debug  */
-#define PRMDEBUG 3
+#define PRMDEBUG 0
 
  /* Option: size of HTML buffer */
 #define HTML_BUFFER 400
