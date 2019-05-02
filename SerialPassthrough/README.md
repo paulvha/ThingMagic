@@ -1,59 +1,52 @@
- **************************************************************************************
-  /// Adjusted the default  SerialPassthrough sketch for connection with          ////
-  /// Nano RFID simultanuous reader on softserial.                                ////
- *************************************************************************************
- 
-  It has been tested against the standard demo.c example from the Mercury API, accept 
-  for the addition mentioned in point 2. THis was running on Ubuntu 18.04. 
-  I have not been able to connect using the UAR on windows 10. I suspect a driver issue with he CH340.
-  Search on CH340 driver windows 10 will show a list of people suffering the same issue. more work
-  needed on that I assume
-  
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  This is not a stable connection for a number of reasons :
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-  1. SoftSerial and Nano must be at the same speed. The Nano will always be 
-  at 115K after reboot. That is too fast for Softserial. During init we try connect
-  with the lower speed. If that fails, we assume a reboot has happened: set
-  SoftSerial to 115K and send a lower baudrate commmand and then reset SoftSerial to that 
-  lower baudrate. However if the Nano was not either the requested baudrate of 115K nothing
-  it will not connect. This can happen if the remote program (e.g. URA) has sent a command 
-  to the reader to change baudrate. You need to remove the power from the reader and re-apply.
+# Connecting RFID Simultaneous reader with Arduino or ESP32
 
-  2. As the USB port on an Arduino is opened the board will reset, driven by DTR.  More info 
-  on https://forum.arduino.cc/index.php?topic=566529.0
-  
-  That means that the sketch will try to connect again to the Nano, and then loosing the first
-  request sent by the remote (e.g. URA). When URA connects it will try to loop through 
-  different baudrates to find one where the reader is working on. The changes are very
-  high that the remote program (e.g. URA) has switched baudrate before the Nano connection ended.
-  Now the Arduino and remote program are out of sync.
-  if you build your own program with the Mercury API, To prevent looping. you can try to use 
-  the following code BEFORE calling connect():
-  
-  // set baudrate
-  uint32_t baudrate = 19200;                            // MUST be the same as serial speed in sketch
-  ret = TMR_paramSet(rp,TMR_PARAM_BAUDRATE,&baudrate);
-  
-  if(ret != TMR_SUCCESS)
-  {
-    printf("could not set baudrate\n");
-    TMR_destroy(rp);
-    exit(0);
-  }
-  
-  3. softSerial on has a default RX buffer of 64 characters. The chances of loosing characters
-  due to buffer overrun is high. Keep reading Serial speed faster or equal to the Nano to prevent
-  buffer overrun as much as possible
+## ===========================================================
 
-  On failure to connect the on-board led will blink every second.
-  
-  NOTE 1:
-  You can NOT just connect on pin 0 and 1 (the standard serial). Even with an empty sketch the driver 
-  on the Arduino will trigger interrupt with each character that arrives from the Nano. 
-  
-  NOTE 2:
-  Always make sure to power the RFID shield with a good power supply. Many communication failures come from that as well
+An investigation and solution to connect the RFID reader to an
+Arduino or ESP32 Thing and control with a remote program that has
+been written with the MercuryAPI from Jadak. Succesfully tested against
+the URA and DEMO application running on Windows.
+<br> A detailed description of the options and findings are in Arduin-Nano.odt
 
-Paul van Haastrecht November 2018
+## Getting Started
+To connect a SparkFun Simultaneous RFID Reader - M6E Nano (SEN-14066) to an application
+running on Linux or Windows (like the Universal Reader Assistant  or URA)
+you need a separate USB to Serial converter.
+<br>I wondered why an Arduino or ESP32 Thing could not be used as many people
+tried that (including me) and failed.
+
+<br>First the good news after analyzing and testing: it CAN be used. !  BUT you need to follow some steps in order to achieve that.
+
+## Prerequisites
+You must have installed the Sparkfun RFID Simultaneous reader library:
+https://github.com/sparkfun/SparkFun_Simultaneous_RFID_Tag_Reader_Library/archive/master.zip
+
+## Software installation
+Obtain the pass_through.ino and start in Arduino IDE
+
+## Program usage
+### Program options
+Please see the description in the top of the sketch and read the documentation (odt)
+
+## Versioning
+###  November 2018
+ * initial version
+
+###  April 2019
+ * added detailed documentation
+ * added support for baudrate change
+ * added blocking reset signal
+ * added support for ESP32 Thing Sparkfun
+ * tested with URA and demo running from Windows PC
+
+## Author
+ * Paul van Haastrecht (paulvha@hotmail.com)
+
+## License
+This project is licensed under the GNU GENERAL PUBLIC LICENSE 3.0
+
+## Acknowledgements
+Make sure to read the Sparkfun Hookup guide
+https://learn.sparkfun.com/tutorials/simultaneous-rfid-tag-reader-hookup-guide/introduction
+
+
