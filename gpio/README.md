@@ -58,7 +58,6 @@ Please see the description in the documentation (odt) and example sketch
 This project is licensed under the GNU GENERAL PUBLIC LICENSE 3.0
 
 ## Acknowledgements
-Make sure to read the datasheet from Sensirion. While draft it does provide good starting point.<br>
-In case you are new to electronics and  wonder about pull-up resistors for I2C, see below (thanks to Shane Diller)
+Mercury API & programming guide
 
 
