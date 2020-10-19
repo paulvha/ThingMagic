@@ -843,9 +843,9 @@ int dec_epcTObarc_gsrn(char *p,char *out, char *scheme)
 	if (digit) digit = 10 - digit;
 
 	/* output */
-	if(strcmp(scheme, "sgrnp") == 0)
+	if(strcmp(scheme, "gsrnp") == 0)
 		sprintf(out,"(8017) %s%d",buf1,digit);
-	else if(strcmp(scheme, "sgrn") == 0)
+	else if(strcmp(scheme, "gsrn") == 0)
 		sprintf(out,"(8018) %s%d",buf1,digit);
 
 	return(EPC_SUCCESS);
