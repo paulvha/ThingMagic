@@ -16,6 +16,8 @@ folder contains update to the original Sparkfun Library
 * ** added example15 to demonstrate new feature : reading all the memory banks in one command (August 2020)
 * ** added example16 to demonstrate new feature : reading a single memory bank and EPC in continuous mode (September 2020)
 * ** added example17 to demonstrate new feature : reading and writting Procotol Word (PC) and EPC (February 2021)
+* ** update example13 and example14 to demonstrate new feature : to demonstate the USER new xxxxDataRegion calls (Feb2021)
+* ** added example18 and example19 to demonstrate new feature : to demonstate the EPC new xxxxDataRegion calls (Feb2021)
 * ************************************************************************************
 
 Below the orginal README
