@@ -20,6 +20,7 @@ folder contains update to the original Sparkfun Library
 * ** added example18 and example19 to demonstrate new feature : to demonstate the EPC new xxxxDataRegion calls (Feb2021)
 * ** update to example15 and TID memory offset (Feb2021)
 * ** updated examples with better Setupnano() (May2021)
+* ** updated library for an apperently needed delay on an ESP32 (may2021)
 * ************************************************************************************
 
 Below the orginal README
