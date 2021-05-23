@@ -19,6 +19,7 @@ folder contains update to the original Sparkfun Library
 * ** update example13 and example14 to demonstrate new feature : to demonstate the USER new xxxxDataRegion calls (Feb2021)
 * ** added example18 and example19 to demonstrate new feature : to demonstate the EPC new xxxxDataRegion calls (Feb2021)
 * ** update to example15 and TID memory offset (Feb2021)
+* ** updated examples with better Setupnano() (May2021)
 * ************************************************************************************
 
 Below the orginal README
