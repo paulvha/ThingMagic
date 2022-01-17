@@ -3,10 +3,10 @@
 ## ===========================================================
 
 Based on different projects and request from different users this
-folder contains update to the original Sparkfun Library
+folder contains update to the original Sparkfun Library.
+The following additions have been done by paulvha:
 
 * ************************************************************************************
-* ** the following additions have been done by paulvha
 * ** special for setting powermode() and getTemp(). (February 2020)
 * ** added example10 to demonstrate powersaving mode (February  2020)
 * ** added example11 and example12 to demonstrate the getTemp() (May 2020)
@@ -22,6 +22,7 @@ folder contains update to the original Sparkfun Library
 * ** updated examples with better Setupnano() (May2021)
 * ** updated library for an apperently needed delay on an ESP32 (may2021)
 * ** update code due to warnings/errors discovered by optimised  /stricter compilers (Jan2022)
+* ** update code to resolve a bug where scanning was not shown in the examples(Jan2022)
 * ************************************************************************************
 
 Below the orginal README
