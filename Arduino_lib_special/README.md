@@ -23,6 +23,7 @@ The following additions have been done by paulvha:
 * ** updated library for an apperently needed delay on an ESP32 (may2021)
 * ** update code due to warnings/errors discovered by optimised  /stricter compilers (Jan2022)
 * ** update code to resolve a bug where scanning was not shown in the examples(Jan2022)
+* ** added extra call, structure  and example20 to select a specific TAG and read data from a specified bank, specified offset and length (Dec2022)
 * ************************************************************************************
 
 Below the orginal README
