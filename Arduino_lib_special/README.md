@@ -3,8 +3,7 @@
 ## ===========================================================
 
 Based on different projects and request from different users this
-folder contains update to the original Sparkfun Library.
-The following additions have been done by paulvha:
+folder contains update to the original Sparkfun Library. The following additions have been done by paulvha
 
 * ************************************************************************************
 * ** special for setting powermode() and getTemp(). (February 2020)
@@ -25,7 +24,22 @@ The following additions have been done by paulvha:
 * ** update code to resolve a bug where scanning was not shown in the examples(Jan2022)
 * ** added extra call, structure  and example20 to select a specific TAG and read data from a specified bank, specified offset and length (Dec2022)
 * ** change EPC[12] to TMR_EPC[12] due to conflict in ESP32  2.0.6 library (march 2023)
+* ** tested on Uno R4 Wifi (see below)
 * ************************************************************************************
+
+** Nano M6E on Uno R4
+Note 1: This has been tested on an UNO R4 Wifi.
+
+When selecting for “Serial1” as the NanoSerial communication port and connecting the M6E with the switch “UART HW”. It will work without modifications. It will use pin 0 as RX and pin 1 as TX.
+
+Big challenges comes with SoftwareSerial. Actually 2 challenges :
+
+Challenge-1:
+This is within the sketch within the function “setupNano(long baudRate)” . The SoftwareSerial library of the UNO R4 does have a boolean function:  while (!NanoSerial).
+WorkAround: replace the “while (!NanoSerial);” with a “delay(1000);”
+
+Challenge-2:
+Given that the SoftwareSerial is working with DMA, the different bytes follow too quickly upon each other and the signal is clean. E.g. at a baudrate 38400 the STOP signal is 23.88us (or 41.946Khz). The M6E does not cope with that. Even with adding delayMicroseconds() at the top of SoftwareSerial::write(uint8_t byte) in SoftwareSerial.cpp I could not get is stable.
 
 Below the orginal README
 
