@@ -24,24 +24,27 @@ folder contains update to the original Sparkfun Library. The following additions
 * ** update code to resolve a bug where scanning was not shown in the examples(Jan2022)
 * ** added extra call, structure  and example20 to select a specific TAG and read data from a specified bank, specified offset and length (Dec2022)
 * ** change EPC[12] to TMR_EPC[12] due to conflict in ESP32  2.0.6 library (march 2023)
-* ** tested on Uno R4 Wifi (see below)
+* ** Tested on UNO-R4 Wifi (see below) (Oct2023)
 * ************************************************************************************
 
-** Nano M6E on Uno R4
-Note 1: This has been tested on an UNO R4 Wifi.
+## Nano M6E on UNO-R4
+Note: This has been tested on an UNO-R4 Wifi and works with the following remarks.
 
 When selecting for “Serial1” as the NanoSerial communication port and connecting the M6E with the switch “UART HW”. It will work without modifications. It will use pin 0 as RX and pin 1 as TX.
 
-Big challenges comes with SoftwareSerial. Actually 2 challenges :
+Two challenges come when selecting SoftwareSerial as the NanoSerial communication port. Make sure to set the switch to "UART-SW".
+The following modifications are needed :
 
-Challenge-1:
+### Challenge-1:
 This is within the sketch within the function “setupNano(long baudRate)” . The SoftwareSerial library of the UNO R4 does have a boolean function:  while (!NanoSerial).
-WorkAround: replace the “while (!NanoSerial);” with a “delay(1000);”
+WorkAround: Replace the “while (!NanoSerial);” with a “delay(1000);”
 
-Challenge-2:
-Given that the SoftwareSerial is working with DMA, the different bytes follow too quickly upon each other and the signal is clean. E.g. at a baudrate 38400 the STOP signal is 23.88us (or 41.946Khz). The M6E does not cope with that. Even with adding delayMicroseconds() at the top of SoftwareSerial::write(uint8_t byte) in SoftwareSerial.cpp I could not get is stable.
+### Challenge-2:
+A problem with UNO-R4 the SoftwareSerial in the library (version 1.0.4) prevents a change a baudrate after an initial baudrate has been set.
+In the function setupNano() it first tries to connect with the wanted baudrate. If that fails it will assume the M6E is still at the default 115200. It will set the NanoSerial to 115200, send an instruction to the M6E to set the wanted baudrate, and reset NanoSerial to the wanted baudrate. Now it will attempt again. As changing the baudrate does not work it will fail to connect.
+WorkAround: In setup() call as setupNano(115200).
 
-Below the orginal README
+## Below the orginal README
 
 SparkFun Simultaneous RFID Tag Reader Library
 ===========================================================
