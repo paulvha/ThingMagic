@@ -43,6 +43,7 @@ WorkAround: Replace the “while (!NanoSerial);” with a “delay(1000);”
 A problem with UNO-R4 the SoftwareSerial in the library (version 1.0.4) prevents a change a baudrate after an initial baudrate has been set.
 In the function setupNano() it first tries to connect with the wanted baudrate. If that fails it will assume the M6E is still at the default 115200. It will set the NanoSerial to 115200, send an instruction to the M6E to set the wanted baudrate, and reset NanoSerial to the wanted baudrate. Now it will attempt again. As changing the baudrate does not work it will fail to connect.
 WorkAround: In setup() call as setupNano(115200).
+Update: A solution to this problem in SoftwareSerial has been posted on ![ArduinoForum]( https://forum.arduino.cc/t/softwareserial-no-baudrate-change-possible/1179988/6
 
 ## Below the orginal README
 
