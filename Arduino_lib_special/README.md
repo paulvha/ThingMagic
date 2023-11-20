@@ -25,6 +25,7 @@ folder contains update to the original Sparkfun Library. The following additions
 * ** added extra call, structure  and example20 to select a specific TAG and read data from a specified bank, specified offset and length (Dec2022)
 * ** change EPC[12] to TMR_EPC[12] due to conflict in ESP32  2.0.6 library (march 2023)
 * ** Tested on UNO-R4 Wifi (see below) (Oct2023)
+* ** added example21: does the same as example1 but added name lookup based on the EPC read (nov2023)
 * ************************************************************************************
 
 ## Nano M6E on UNO-R4
