@@ -37,12 +37,7 @@ Sparkfun has launched an update to the earlier library (V1.2.0)), with mainly co
 - 1. By default the library assumes your board is an M6E_Nano and in case you set for region REGION_NORTHAMERICA it will use REGION_NORTHAMERICA2 as is how it was. If you really want to use REGION_NORTHAMERICA with an M7E, change nano.begin(NanoSerial) to nano.begin(NanoSerial,ThingMagic_M7E_HECTO);
 - 2. This library was already supporting setting the GPIO's on the M6E Nano since August 2019. Starting the new Sparkfun library they have added this option as well with different calls. I have included those in this library, included their example9. I also kept the earlier ones for backward compatibility.
 
-None of your existing sketches needs a change in order to work with the updated library on the M6E. 
-However if using the M7E in the sketch setupNano() routine change 
-
-nano.begin(NanoSerial); //Tell the library to communicate over serial port <br>
-to <br>
-nano.begin(NanoSerial, ThingMagic_M7E_HECTO); //Tell the library to communicate over serial port
+None of your existing sketches needs a change in order to work with the updated library.
 
 ## Nano M6E on UNO-R4
 Note: This has been tested on an UNO-R4 Wifi and works with the following remarks.
