@@ -40,8 +40,8 @@ Sparkfun has launched an update to the earlier library (V1.2.0)), with mainly co
 None of your existing sketches needs a change in order to work with the updated library on the M6E. 
 However if using the M7E in the sketch setupNano() routine change 
 
-nano.begin(NanoSerial); //Tell the library to communicate over serial port
-to 
+nano.begin(NanoSerial); //Tell the library to communicate over serial port <br>
+to <br>
 nano.begin(NanoSerial, ThingMagic_M7E_HECTO); //Tell the library to communicate over serial port
 
 ## Nano M6E on UNO-R4
