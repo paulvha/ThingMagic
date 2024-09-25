@@ -1,4 +1,4 @@
-# Sparkfun M6e Nano special libraries
+# Sparkfun M6e/M7e Nano special libraries
 
 ## ===========================================================
 
@@ -26,10 +26,11 @@ folder contains update to the original Sparkfun Library. The following additions
 * ** change EPC[12] to TMR_EPC[12] due to conflict in ESP32  2.0.6 library (march 2023)
 * ** Tested on UNO-R4 Wifi (see below) (Oct2023)
 * ** added example21: does the same as example1 but added name lookup based on the EPC read (nov2023)
-* ** updated library for the M7E support and aligned with recent Sparkfun changes (June 2024)
+* ** updated SRC-library for the M7E support and aligned with recent Sparkfun changes (June2024)
+* ** added getTagPhase()call and example22 to demonstrate (Sept 2024)
 * ************************************************************************************
 
-## Nano M7E replaces M6E (May 2024))
+## Nano M7E replaces M6E (June 2024))
 ThingMagic/Jadak is phasing out the M6E range and provides a new range M7E. The M7E HECTO is the replacement for the M6E NANO and is backward compatible. 
 The M7E promises a lower popwer consumption and some other changes all of them have minor impact on the Sparkfun implementation.<br>
 Sparkfun has launched an update to the earlier library (V1.2.0)), with mainly cosmetic changes. 
@@ -39,12 +40,12 @@ Sparkfun has launched an update to the earlier library (V1.2.0)), with mainly co
 
 None of your existing sketches needs a change in order to work with the updated library.
 
-## Nano M6E on UNO-R4
+## Nano M6E on UNO-R4 (October 2023)
 Note: This has been tested on an UNO-R4 Wifi and works with the following remarks.
 
 When selecting for “Serial1” as the NanoSerial communication port and connecting the M6E with the switch “UART HW”. It will work without modifications. It will use pin 0 as RX and pin 1 as TX.
 
-Two challenges come when selecting SoftwareSerial as the NanoSerial communication port. Make sure to set the switch to "UART-SW".
+Two CHALLENGES come when selecting SOFTWARESERIAL as the NanoSerial communication port. Make sure to set the switch to "UART-SW".
 The following modifications are needed :
 
 ### Challenge-1:
