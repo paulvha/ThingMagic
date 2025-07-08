@@ -28,7 +28,10 @@ folder contains update to the original Sparkfun Library. The following additions
 * ** added example21: does the same as example1 but added name lookup based on the EPC read (nov2023)
 * ** updated SRC-library for the M7E support and aligned with recent Sparkfun changes (June2024)
 * ** added getTagPhase()call and example22 to demonstrate (Sept 2024)
-* ** added 3 new GEN2 calls: setGen2Session(), setGen2RFmode(), setGen2RFTarget(). See example30. (July 2025)
+* ** July2025:
+* ** added 5 new GEN2 calls: setGen2Session(), setGen2RFmode(), setGen2RFTarget(), setGen2Encoding(), setGen2Q()
+* ** added example30 and example31 to demonstrate the new functions.
+* ** updated all examples and parts of source code for stability
 * ************************************************************************************
 
 ## Nano M7E replaces M6E (June 2024))
