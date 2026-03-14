@@ -32,7 +32,8 @@ folder contains update to the original Sparkfun Library. The following additions
 * ** added 5 new GEN2 calls: setGen2Session(), setGen2RFmode(), setGen2RFTarget(), setGen2Encoding(), setGen2Q()
 * ** added example30 and example31 to demonstrate the new functions.
 * ** updated all examples and parts of source code for stability
-* ** update to setPowerMode(uint8_t mode) to enable SLEEP on M7E (Sept 2025)
+* ** update to setPowerMode(uint8_t mode) to enable SLEEP on M7E (september 2025)
+* ** added RESPONSE_IS_HIGHRETURNLOSS for M7E (march 2026)
 * ************************************************************************************
 
 ## Nano M7E replaces M6E (June 2024))
