@@ -4016,32 +4016,22 @@ int enc_pureTOtag(char *pure_epc, char *tag_epc, int filter, int bits)
   }
   else
   {
-    uint8_t len = strlen(scheme);     // feb 2026
-    char *tmp_scheme = malloc(len * sizeof(char));
-
-    if (tmp_scheme == 0) {
-      p_printf(RED,"Can not allocate memory for scheme \n");
-      return(EPC_ERROR);
-    }
-
-    snprintf(tmp_scheme,len,"%s",scheme);
+    char scheme_full[32]; // begin June 2026, thanks for Henriks82
 
     if (bits == 1)
-      sprintf(scheme,"%s-var", tmp_scheme);
+      snprintf(scheme_full, sizeof(scheme_full), "%s-var", scheme);
     else
-      sprintf(scheme,"%s-%d", tmp_scheme, bits);
-
-    free(tmp_scheme);    // feb 2026
+      snprintf(scheme_full, sizeof(scheme_full), "%s-%d", scheme, bits);
 
     // check for correct bits combination
-    if (epc_scheme_lkup(scheme, 0xff) == 0xff)
+    if (epc_scheme_lkup(scheme_full, 0xff) == 0xff)
     {
-      p_printf(RED,"scheme %s : not found in partition table\n", scheme);
+      p_printf(RED,"scheme %s : not found in partition table\n", scheme_full);
       return(EPC_ERROR);
     }
 
     // add uri to tag_epc
-    sprintf(tag_epc, "urn:epc:tag:%s:%d.%s",scheme,filter, p);
+    sprintf(tag_epc, "urn:epc:tag:%s:%d.%s",scheme_full,filter, p); // end June 2026, thanks for Henriks82
   }
   return(EPC_SUCCESS);
 }

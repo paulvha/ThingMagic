@@ -29,6 +29,10 @@ Encoding:<br>
   From Tag_encoding or Pure-Identity URI to binary (autodetect) <br>
 
 ## Versioning
+
+###  version 1.0.2 / June 2026
+ * applied change to handle GTIN (thanks to Henrik82)
+
 ###  Version 1.0.1 / februari 2026
  * fixed compiler warnings/errors
 
